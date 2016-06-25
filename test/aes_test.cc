@@ -17,7 +17,7 @@
 #include "common.hh"
 #include "aes_test.hh"
 
-#define MAX_FLOW_LEN 16384
+#define MAX_FLOW_LEN 32768
 
 static bool test_correctness_aes_cbc_encrypt(unsigned key_bits,
 					     unsigned num_flows,
@@ -429,18 +429,18 @@ void test_aes_enc(int size)
 	printf("AES-128-CBC ENC, Size: %dKB\n", size / 1024);
 	printf("------------------------------------------\n");
 	printf("#msg latency(usec) thruput(Mbps)\n");
-	for (unsigned i = 1; i <= 4096;  i *= 2)
+	for (unsigned i = 16384; i <= 16384;  i *= 2)
 		test_latency_aes_cbc_encrypt(128, i, size);
 
-	bool result = true;
-	printf("Correctness check (batch, random): ");
-	for (unsigned i = 1; i <= 4096; i *= 2)
-		result = result && test_correctness_aes_cbc_encrypt(128, i, size);
+	//bool result = true;
+	//printf("Correctness check (batch, random): ");
+	//for (unsigned i = 1; i <= 4096; i *= 2)
+	//	result = result && test_correctness_aes_cbc_encrypt(128, i, size);
 
-	if (!result)
-		printf("FAIL\n");
-	else
-		printf("OK\n");
+	//if (!result)
+	//	printf("FAIL\n");
+	//else
+	//	printf("OK\n");
 }
 
 void test_aes_dec(int size)
@@ -470,7 +470,7 @@ void test_aes_enc_stream(int size, int num_stream)
 	printf("------------------------------------------\n");
 	printf("#msg #stream latency(usec) thruput(Mbps)\n");
 
-	for (unsigned i = 1; i <= 4096;  i *= 2)
+	for (unsigned i = 1024; i <= 16384; i *= 2)
 		test_latency_stream_aes_cbc_encrypt(128, i, size, num_stream);
 
 }
@@ -484,7 +484,6 @@ void test_aes_dec_stream(int size, int num_stream)
 
 	for (unsigned i = 1; i <= 4096;  i *= 2)
 		test_latency_stream_aes_cbc_decrypt(128, i, size, num_stream);
-
 }
 
 static char usage[] = "%s -m ENC|DEC "
@@ -497,7 +496,7 @@ int main(int argc, char *argv[])
 
 	bool enc = false;
 	bool dec = false;
-	int size = 16384;
+	int size = MAX_FLOW_LEN;
 	int num_stream = 0;
 
 	int i = 1;
@@ -525,7 +524,7 @@ int main(int argc, char *argv[])
 			if (i == argc)
 				goto parse_error;
 			size = atoi(argv[i]);
-			if (size <= 0 || size > 16384 || size % 16 != 0)
+			if (size <= 0 || size > MAX_FLOW_LEN  || size % 16 != 0)
 				goto parse_error;
 		} else
 			goto parse_error;
@@ -564,7 +563,7 @@ void gen_aes_cbc_data(operation_batch_t *ops,
 		      bool              encrypt)
 {
 	assert(flow_len  > 0 && flow_len  <= MAX_FLOW_LEN);
-	assert(num_flows > 0 && num_flows <= 4096);
+	assert(num_flows > 0 && num_flows <= 200000);
 	assert(key_bits == 128);
 	assert(ops != NULL);
 

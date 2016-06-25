@@ -11,13 +11,13 @@ LIBDIR = $(OPENSSL_LIBDIR) \
 	 $(CUDA_LIBDIR) \
 	 $(GPUCRYPTO_LIBDIR)
 
-LIBS =  -lpthread $(CUDA_LIBS) $(OPENSSL_LIB) $(GPYCRYPTO_LIB)
+LIBS = $(GPYCRYPTO_LIB) -lpthread $(CUDA_LIBS) $(OPENSSL_LIB) 
 
 INC += 	$(GPUCRYPTO_INCDIR)
 
 TARGET_DIR = ../bin/
 OBJ_DIR = ../objs/
-TARGET_FILES = rsa_test aes_test sha_test
+TARGET_FILES = aes_test
 TARGETS = $(addprefix $(TARGET_DIR), $(TARGET_FILES))
 OBJS = $(addprefix $(OBJ_DIR), $(addsuffix .o, $(TARGET_FILES))) $(OBJ_DIR)common.o
 
